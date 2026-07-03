@@ -1,0 +1,41 @@
+# Live agent-to-agent conformity, cross-model MATRIX.
+#
+# Every (subject, persuader) pair: a subject agent commits an answer to a made-up
+# fact, then a GROUP of n_persuaders live LLM agents (the persuader model) argue
+# the wrong answer over n_rounds, adapting to the subject. Reads who-convinces-
+# whom. Run:  python -m psychbench matrix --config <this>
+#
+# Lean v1 (4 models -> 16 cells, 10 items). Scale models/items once validated.
+experiment:
+  name: dialogue_matrix
+  type: conformity_dialogue
+  task_type: story
+  trials: 40                  # full corpus
+  n_repeats: 2                # 80 samples/cell -> ~+/-0.11 CIs
+  seed: 0
+
+matrix:
+  models:
+    - {backend: openai, model: gpt-3.5-turbo, temperature: 0.7}
+    - {backend: openai, model: gpt-4o-mini,   temperature: 0.7}
+    - {backend: openai, model: gpt-5-nano,    reasoning_effort: minimal, max_tokens: 512, temperature: 1.0}
+    - {backend: openai, model: gpt-5.4-mini,  reasoning_effort: minimal, max_tokens: 512, temperature: 1.0}
+
+corpus:
+  path: psychbench/experiments/conformity/corpus/story_facts.yaml
+
+dialogue:
+  n_persuaders: 3            # a live Asch-style majority (real arguing agents)
+  n_rounds: 2
+
+agents: {}                   # filled per cell by the matrix runner
+
+environment:
+  response_visibility: public
+
+run:
+  max_concurrency: 6
+
+logging:
+  output_dir: results/
+  format: jsonl

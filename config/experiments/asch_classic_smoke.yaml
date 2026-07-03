@@ -1,0 +1,29 @@
+# Hermetic plumbing smoke for the faithful Asch replication. Echo backend, no
+# API keys, runs in <1s. Echo returns the last A/B/C it sees in the prompt, so
+# its answers are artifacts, NOT behavior — this only proves the fixed 18-trial
+# set, the two-card prompt, and the alone/group + induced-hallucination pipeline
+# all wire together. Use asch_classic.yaml with a real model for actual data.
+experiment:
+  name: asch_classic_smoke
+  type: conformity
+  task_type: lines_classic
+  seed: 0
+  n_repeats: 1
+
+agents:
+  confederates:
+    count: 7
+    dissenter: false
+  naive:
+    backend: echo
+    model: echo-test
+    temperature: 0.0
+    max_tokens: 16
+    stateful: false
+
+environment:
+  response_visibility: public
+
+logging:
+  output_dir: results/
+  format: jsonl

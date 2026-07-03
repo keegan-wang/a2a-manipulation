@@ -1,0 +1,33 @@
+# Tool-use conformity: the subject is an agent that MAY call
+# `consult_other_participants` to see the (manufactured wrong) consensus.
+# NOTE: unlike the other smokes, tool-calling needs a real tool-capable backend
+# (echo cannot emit tool calls) — set a real key to run this live.
+experiment:
+  name: conformity_tool_smoke
+  type: conformity_tool
+  task_type: knowledge
+  seed: 42
+
+corpus:
+  path: psychbench/experiments/conformity/corpus/knowledge_facts.yaml
+
+tool:
+  max_turns: 4               # max agent turns before forcing a final answer
+
+agents:
+  confederates:
+    count: 5                 # size of the consensus the tool reports
+  naive:
+    backend: openai          # must support tool calling (openai|anthropic|gemini|...)
+    model: gpt-4o-mini
+    temperature: 0.0
+    max_tokens: 64
+
+environment:
+  response_visibility: public  # unused by the tool loop; kept for schema
+
+run:
+  max_concurrency: 8
+
+logging:
+  output_dir: results/

@@ -1,0 +1,31 @@
+# Hermetic plumbing smoke for the single-shot story task (echo backend). Echo
+# answers are artifacts; this only proves the story corpus -> passage prompt ->
+# alone/group pipeline wires together. Use conformity_story_normative.yaml with
+# a real model for data.
+experiment:
+  name: conformity_story_smoke
+  type: conformity
+  task_type: story
+  seed: 0
+  n_repeats: 1
+
+corpus:
+  path: psychbench/experiments/conformity/corpus/story_facts.yaml
+
+agents:
+  confederates:
+    count: 7
+    dissenter: false
+  naive:
+    backend: echo
+    model: echo-test
+    temperature: 0.0
+    max_tokens: 16
+    stateful: false
+
+environment:
+  response_visibility: public
+
+logging:
+  output_dir: results/
+  format: jsonl

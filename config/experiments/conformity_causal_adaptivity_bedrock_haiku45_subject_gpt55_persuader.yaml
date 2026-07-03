@@ -1,0 +1,40 @@
+experiment:
+  name: conformity_causal_adaptivity_bedrock_haiku45_subject_gpt55_persuader
+  type: conformity_causal
+  task_type: story
+  trials: 180
+  seed: 0
+  run_id: causal_adaptivity_bedrock_haiku45_subject_gpt55_persuader
+
+corpus:
+  path: psychbench/experiments/conformity/corpus/relational_facts_powered.yaml
+
+causal:
+  condition_set: adaptivity
+  n_rounds: 1
+
+agents:
+  subject:
+    backend: bedrock
+    model: us.anthropic.claude-haiku-4-5-20251001-v1:0
+    aws_region_name: us-east-1
+    temperature: 0.0
+    max_tokens: 192
+  persuader:
+    backend: openai
+    model: gpt-5.5
+    temperature: 1.0
+    max_tokens: 256
+    extra_params:
+      reasoning_effort: low
+
+run:
+  max_concurrency: 4
+  resume: true
+
+environment:
+  response_visibility: public
+
+logging:
+  output_dir: results/
+  format: jsonl

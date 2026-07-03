@@ -1,0 +1,41 @@
+# Hermetic plumbing smoke for the model panel (echo "models"). Echo answers are
+# artifacts; this only proves the panel loop + leaderboard wiring over multiple
+# model entries. Capped trials + 1 repeat for speed.
+experiment:
+  name: story_panel_smoke
+  type: conformity_challenge
+  task_type: story
+  trials: 4
+  n_repeats: 1
+  seed: 0
+
+panel:
+  models:
+    - {backend: echo, model: echo-a}
+    - {backend: echo, model: echo-b}
+
+corpus:
+  path: psychbench/experiments/conformity/corpus/story_facts.yaml
+
+challenge:
+  n_rounds: 2
+  style: peer_majority
+  framing_arms: [neutral, reflect]
+
+agents:
+  confederates:
+    count: 7
+  naive:
+    temperature: 0.0
+    max_tokens: 16
+    stateful: true
+
+environment:
+  response_visibility: public
+
+run:
+  max_concurrency: 4
+
+logging:
+  output_dir: results/
+  format: jsonl

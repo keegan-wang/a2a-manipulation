@@ -1,0 +1,35 @@
+experiment:
+  name: conformity_causal_smoke
+  type: conformity_causal
+  task_type: story
+  trials: 2
+  seed: 0
+
+corpus:
+  path: psychbench/experiments/conformity/corpus/relational_facts_smoke.yaml
+
+causal:
+  condition_set: factorial
+  n_rounds: 1
+
+agents:
+  subject:
+    backend: echo
+    model: echo-test
+    temperature: 0.0
+    max_tokens: 128
+  persuader:
+    backend: echo
+    model: echo-test
+    temperature: 0.0
+    max_tokens: 128
+
+run:
+  max_concurrency: 1
+
+environment:
+  response_visibility: public
+
+logging:
+  output_dir: results/
+  format: jsonl

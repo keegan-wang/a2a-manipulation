@@ -1,0 +1,18 @@
+experiment:
+  name: conformity_causal_srt_smoke
+  type: conformity_causal
+  task_type: story
+  trials: 8
+  seed: 0
+  run_id: causal_srt_smoke_gpt4omini
+corpus:
+  path: psychbench/experiments/conformity/corpus/relational_facts_powered.yaml
+causal:
+  condition_set: source_rationale
+  n_rounds: 1
+agents:
+  subject: {backend: openai, model: gpt-4o-mini, temperature: 0.0, max_tokens: 192}
+  persuader: {backend: openai, model: gpt-4o-mini, temperature: 0.0, max_tokens: 192}
+run: {max_concurrency: 4, resume: false}
+environment: {response_visibility: public}
+logging: {output_dir: results/, format: jsonl}

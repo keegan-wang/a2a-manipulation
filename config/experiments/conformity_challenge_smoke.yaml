@@ -1,0 +1,34 @@
+# Hermetic smoke for the multi-turn conformity challenge (echo backend).
+# The subject commits to an answer, then the group pushes back for `n_rounds`
+# turns. Echo answers are artifacts; real signal needs a real backend.
+experiment:
+  name: conformity_challenge_smoke
+  type: conformity_challenge
+  task_type: knowledge        # knowledge | lines
+  seed: 42
+
+corpus:
+  path: psychbench/experiments/conformity/corpus/knowledge_facts.yaml
+
+challenge:
+  n_rounds: 3                 # number of push-back turns after round 0
+  # style: wrong_assertion | neutral | correct_assertion | authority | reasoned
+  style: wrong_assertion
+
+agents:
+  confederates:
+    count: 5                  # framing only: "the other 5 participants"
+  naive:
+    backend: echo             # openai|anthropic|gemini|groq|vllm|...
+    model: echo-test
+    temperature: 0.0
+    max_tokens: 16
+
+environment:
+  response_visibility: public  # unused by the challenge loop; kept for schema
+
+run:
+  max_concurrency: 4
+
+logging:
+  output_dir: results/

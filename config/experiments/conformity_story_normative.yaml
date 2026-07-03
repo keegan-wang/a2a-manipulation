@@ -1,0 +1,39 @@
+# Single-shot STORY task + normative (public/private) manipulation.
+#
+# Each item is an arbitrary made-up fact stated in a short passage (no model
+# prior), so the model reads it, is right alone, but the belief is fragile/
+# context-derived — the LLM analog of Asch's perceptual judgment. Passage stays
+# visible (the model can re-read it). The group asserts the wrong answer; the
+# public/private lever then measures any normative component.
+experiment:
+  name: conformity_story_normative
+  type: conformity
+  task_type: story
+  observability_manipulation: true
+  seed: 0
+  n_repeats: 1
+
+corpus:
+  path: psychbench/experiments/conformity/corpus/story_facts.yaml
+
+agents:
+  confederates:
+    count: 7
+    dissenter: false
+  naive:
+    backend: openai
+    model: gpt-4o-mini
+    temperature: 0.0
+    max_tokens: 16
+    stateful: false
+
+environment:
+  response_visibility: public   # per-condition visibility is set by the runner
+
+run:
+  max_concurrency: 8
+  resume: true
+
+logging:
+  output_dir: results/
+  format: jsonl

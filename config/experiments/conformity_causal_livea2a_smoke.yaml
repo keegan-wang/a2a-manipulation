@@ -1,0 +1,9 @@
+experiment: {name: livea2a_smoke, type: conformity_causal, task_type: story, trials: 4, seed: 0, run_id: livea2a_smoke}
+corpus: {path: psychbench/experiments/conformity/corpus/relational_facts_powered.yaml}
+causal: {condition_set: live_a2a, n_rounds: 2}
+agents:
+  subject: {backend: openai, model: gpt-4o-mini, temperature: 0.0, max_tokens: 192}
+  persuader: {backend: openai, model: gpt-4o-mini, temperature: 0.7, max_tokens: 160}
+run: {max_concurrency: 4, resume: false}
+environment: {response_visibility: public}
+logging: {output_dir: results/, format: jsonl}

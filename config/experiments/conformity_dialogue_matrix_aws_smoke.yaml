@@ -1,0 +1,35 @@
+# Smoke test: confirm Bedrock + OpenAI models work in the matrix runner (n=2, 2 models).
+experiment:
+  name: dialogue_matrix_aws_smoke
+  type: conformity_dialogue
+  task_type: story
+  trials: 2
+  n_repeats: 1
+  seed: 0
+  run_id: dialogue_matrix_aws_smoke
+
+matrix:
+  models:
+    - {backend: openai,  model: gpt-4o-mini, label: gpt-4o-mini, temperature: 0.7}
+    - {backend: bedrock, model: "us.meta.llama3-1-8b-instruct-v1:0", label: llama-3.1-8b, temperature: 0.7,
+       extra_params: {aws_region_name: us-east-1}}
+
+corpus:
+  path: psychbench/experiments/conformity/corpus/story_facts.yaml
+
+dialogue:
+  n_persuaders: 3
+  n_rounds: 2
+
+agents: {}
+
+environment:
+  response_visibility: public
+
+run:
+  matrix_concurrency: 4
+  max_concurrency: 2
+
+logging:
+  output_dir: results/
+  format: jsonl

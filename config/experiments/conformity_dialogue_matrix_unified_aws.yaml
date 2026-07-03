@@ -1,0 +1,51 @@
+# Unified influence matrix over the AWS+OpenAI panel (12 models, 5 labs).
+# Matches the Study 2 causal panel so both studies cover the same models.
+# Gemini and Qwen are omitted (not hosted on Bedrock). Reasoning models use
+# minimal effort for tractable cost/latency. 12x12 = 144 cells, n=20/cell.
+# Run:  python -m psychbench matrix --config <this> --output-dir results/
+experiment:
+  name: dialogue_matrix_unified_aws
+  type: conformity_dialogue
+  task_type: story
+  trials: 20
+  n_repeats: 1
+  seed: 0
+  run_id: dialogue_matrix_unified_aws
+
+matrix:
+  models:
+    - {backend: openai,  model: gpt-3.5-turbo, label: gpt-3.5-turbo, temperature: 0.7}
+    - {backend: openai,  model: gpt-4o-mini,   label: gpt-4o-mini,   temperature: 0.7}
+    - {backend: openai,  model: gpt-5-nano,    label: gpt-5-nano,    temperature: 1.0, max_tokens: 512, extra_params: {reasoning_effort: minimal}}
+    - {backend: openai,  model: gpt-5.4-mini,  label: gpt-5.4-mini,  temperature: 1.0, max_tokens: 512, extra_params: {reasoning_effort: minimal}}
+    - {backend: openai,  model: gpt-5.5,       label: gpt-5.5,       temperature: 1.0, max_tokens: 512, extra_params: {reasoning_effort: minimal}}
+    - {backend: bedrock, model: "us.anthropic.claude-haiku-4-5-20251001-v1:0", label: claude-haiku-4.5, temperature: 0.7, extra_params: {aws_region_name: us-east-1}}
+    - {backend: bedrock, model: "us.anthropic.claude-sonnet-4-6",   label: claude-sonnet-4.6, temperature: 0.7, extra_params: {aws_region_name: us-east-1}}
+    - {backend: bedrock, model: "us.anthropic.claude-opus-4-6-v1",  label: claude-opus-4.6,  temperature: 0.7, extra_params: {aws_region_name: us-east-1}}
+    - {backend: bedrock, model: "us.meta.llama3-1-8b-instruct-v1:0", label: llama-3.1-8b, temperature: 0.7, extra_params: {aws_region_name: us-east-1}}
+    - {backend: bedrock, model: "us.meta.llama3-3-70b-instruct-v1:0", label: llama-3.3-70b, temperature: 0.7, extra_params: {aws_region_name: us-east-1}}
+    - {backend: bedrock, model: "deepseek.v3.2", label: deepseek-v3.2, temperature: 0.7, max_tokens: 512, extra_params: {aws_region_name: us-east-1}}
+    - {backend: bedrock, model: "mistral.mistral-large-3-675b-instruct", label: mistral-large-3, temperature: 0.7, extra_params: {aws_region_name: us-east-1}}
+    # added once OpenRouter is funded (Gemini/Qwen are not on Bedrock):
+    - {backend: openrouter, model: "google/gemini-2.5-flash",        label: gemini-2.5-flash, temperature: 0.7}
+    - {backend: openrouter, model: "qwen/qwen3-235b-a22b",            label: qwen3-235b,       temperature: 0.7, max_tokens: 256}
+
+corpus:
+  path: psychbench/experiments/conformity/corpus/story_facts.yaml
+
+dialogue:
+  n_persuaders: 3
+  n_rounds: 2
+
+agents: {}
+
+environment:
+  response_visibility: public
+
+run:
+  matrix_concurrency: 6
+  max_concurrency: 2
+
+logging:
+  output_dir: results/
+  format: jsonl

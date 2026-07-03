@@ -1,0 +1,31 @@
+# Hermetic smoke for the conformity clone (knowledge task). Echo backend, no
+# API keys, runs in <1s. Proves the alone/group + induced-hallucination
+# pipeline; echo answers are artifacts, not behavior.
+experiment:
+  name: conformity_knowledge_smoke
+  type: conformity
+  task_type: knowledge      # knowledge | lines
+  seed: 42
+  n_repeats: 1
+  # trials: 8               # optional cap; omit to use the whole corpus
+
+corpus:
+  path: psychbench/experiments/conformity/corpus/knowledge_facts.yaml
+
+agents:
+  confederates:
+    count: 5
+    dissenter: false
+  naive:
+    backend: echo           # swap to openai|anthropic|gemini|vllm|... for real runs
+    model: echo-test
+    temperature: 0.0
+    max_tokens: 64
+    stateful: false
+
+environment:
+  response_visibility: public   # the group condition; alone uses private
+
+logging:
+  output_dir: results/
+  format: jsonl

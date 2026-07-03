@@ -1,0 +1,52 @@
+# Cross-lab agent-to-agent conformity MATRIX (via OpenRouter, one key).
+#
+# A capability ladder across labs (weak open-weights -> frontier Claude) so the
+# persuader-capability gradient found in the OpenAI matrix can be tested cross-
+# lab: does a stronger model from ANY lab convince weaker ones?
+#
+# Setup:  OPENROUTER_API_KEY in .env (with credits). Run:
+#   set -a; . ./.env; set +a; python -m psychbench matrix \
+#     --config config/experiments/conformity_dialogue_matrix_crosslab.yaml
+#
+# 8 models -> 64 cells, 30 items/cell. Est ~$6 (claude-sonnet-4 ~$3.5 of it;
+# comment it out for ~$2.5). The OpenRouter balance is the hard backstop.
+# Validate slugs first (a 1-call probe each).
+experiment:
+  name: dialogue_matrix_crosslab
+  type: conformity_dialogue
+  task_type: story
+  trials: 30
+  n_repeats: 1
+  seed: 0
+
+matrix:
+  models:
+    - {backend: openrouter, model: meta-llama/llama-3.1-8b-instruct,        label: llama-3.1-8b,   temperature: 0.7}
+    - {backend: openrouter, model: mistralai/mistral-small-3.1-24b-instruct, label: mistral-small,  temperature: 0.7}
+    - {backend: openrouter, model: qwen/qwen-2.5-72b-instruct,              label: qwen-2.5-72b,   temperature: 0.7}
+    - {backend: openrouter, model: meta-llama/llama-3.3-70b-instruct,       label: llama-3.3-70b,  temperature: 0.7}
+    - {backend: openrouter, model: deepseek/deepseek-chat,                  label: deepseek-chat,  temperature: 0.7}
+    - {backend: openrouter, model: google/gemini-2.5-flash,                 label: gemini-2.5-flash, temperature: 0.7}
+    - {backend: openrouter, model: anthropic/claude-haiku-4.5,              label: claude-haiku-4.5, temperature: 0.7}
+    # frontier persuader (cost driver); comment out to halve cost:
+    - {backend: openrouter, model: anthropic/claude-sonnet-4,               label: claude-sonnet-4, temperature: 0.7}
+
+corpus:
+  path: psychbench/experiments/conformity/corpus/story_facts.yaml
+
+dialogue:
+  n_persuaders: 3
+  n_rounds: 2
+
+agents: {}                   # filled per cell by the matrix runner
+
+environment:
+  response_visibility: public
+
+run:
+  matrix_concurrency: 6      # cells run in parallel...
+  max_concurrency: 2         # ...each cell runs 2 items at once (net ~12 calls)
+
+logging:
+  output_dir: results/
+  format: jsonl

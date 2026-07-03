@@ -1,0 +1,39 @@
+experiment:
+  name: conformity_causal_srt_bedrock_deepseek
+  type: conformity_causal
+  task_type: story
+  trials: 180
+  seed: 0
+  run_id: causal_srt_bedrock_deepseek
+
+corpus:
+  path: psychbench/experiments/conformity/corpus/relational_facts_powered.yaml
+
+causal:
+  condition_set: source_rationale
+  n_rounds: 1
+
+agents:
+  subject:
+    backend: bedrock
+    model: deepseek.v3.2
+    temperature: 0.0
+    max_tokens: 256
+    aws_region_name: us-east-1
+  persuader:
+    backend: bedrock
+    model: deepseek.v3.2
+    temperature: 0.0
+    max_tokens: 256
+    aws_region_name: us-east-1
+
+run:
+  max_concurrency: 4
+  resume: true
+
+environment:
+  response_visibility: public
+
+logging:
+  output_dir: results/
+  format: jsonl

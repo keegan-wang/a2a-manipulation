@@ -1,0 +1,44 @@
+# Framing ablation — WHY does a pre-answer sentence cut conformity?
+#
+# Answer-from-memory story task, identical peer pressure, one arm per framing
+# sentence (peer info held constant). Arms:
+#   neutral  — no sentence (bare pressure baseline)
+#   filler   — length-matched, content-irrelevant ("the room has white walls...")
+#   reflect  — explicit metacognitive cue ("think about what you read...")
+#   public   — observability (answer shown to the group)
+#   private  — observability (answer anonymous)
+# If filler ~ neutral but reflect/public/private << neutral, the effect is the
+# sentence's CONTENT (metacognition), not just adding words.
+experiment:
+  name: conformity_story_framing_ablation
+  type: conformity_challenge
+  task_type: story
+  seed: 0
+
+corpus:
+  path: psychbench/experiments/conformity/corpus/story_facts.yaml
+
+challenge:
+  n_rounds: 3
+  style: peer_majority
+  framing_arms: [neutral, filler, reflect, public, private]
+
+agents:
+  confederates:
+    count: 7
+  naive:
+    backend: openai
+    model: gpt-3.5-turbo
+    temperature: 0.0
+    max_tokens: 16
+    stateful: true
+
+environment:
+  response_visibility: public
+
+run:
+  max_concurrency: 8
+
+logging:
+  output_dir: results/
+  format: jsonl

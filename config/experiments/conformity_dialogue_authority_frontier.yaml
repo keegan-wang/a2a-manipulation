@@ -1,0 +1,46 @@
+# Authority-augmented LIVE persuasion vs the frontier models that resisted live
+# PEER argument (all ~0.00 in the peer matrices).
+#
+# persuader_style: authority -> the live persuaders wield claimed expertise,
+# official records, scholarly consensus, and invented citations (the live analog
+# of the scripted max_pressure authority stack). Question: does a live agent
+# using AUTHORITY crack models immune to live PEER pressure?
+#
+# 5 robust subjects x 5 authority persuaders = 25 cells. gpt models via the
+# direct OpenAI key; Claude/Gemini via OpenRouter. Run with `matrix`.
+experiment:
+  name: dialogue_authority_frontier
+  type: conformity_dialogue
+  task_type: story
+  trials: 20
+  n_repeats: 1
+  seed: 0
+
+matrix:
+  models:
+    - {backend: openai,     model: gpt-4o-mini,                 label: gpt-4o-mini,      temperature: 0.7}
+    - {backend: openai,     model: gpt-5.4-mini,                label: gpt-5.4-mini,     reasoning_effort: minimal, max_tokens: 512, temperature: 1.0}
+    - {backend: openrouter, model: google/gemini-2.5-flash,     label: gemini-2.5-flash, temperature: 0.7}
+    - {backend: openrouter, model: anthropic/claude-haiku-4.5,  label: claude-haiku-4.5, temperature: 0.7}
+    - {backend: openrouter, model: anthropic/claude-sonnet-4,   label: claude-sonnet-4,  temperature: 0.7}
+
+corpus:
+  path: psychbench/experiments/conformity/corpus/story_facts.yaml
+
+dialogue:
+  n_persuaders: 3
+  n_rounds: 2
+  persuader_style: authority
+
+agents: {}
+
+environment:
+  response_visibility: public
+
+run:
+  matrix_concurrency: 6
+  max_concurrency: 2
+
+logging:
+  output_dir: results/
+  format: jsonl

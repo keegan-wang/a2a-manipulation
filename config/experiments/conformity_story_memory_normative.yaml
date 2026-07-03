@@ -1,0 +1,41 @@
+# Answer-from-memory STORY task + normative (public/private) manipulation.
+#
+# This puts the public/private lever in the regime where LLM conformity actually
+# occurs (the model commits, the passage is removed, then the majority disputes
+# it). The identical pressure is run twice; only whether the subject's answer is
+# observed differs. Headline = normative_gap_capitulation / _induced:
+#   gap ~0  -> caving is pure informational deference (can't verify -> defers)
+#   gap > 0 -> an observable normative component (cares that it's watched)
+experiment:
+  name: conformity_story_memory_normative
+  type: conformity_challenge
+  task_type: story
+  observability_manipulation: true
+  seed: 0
+
+corpus:
+  path: psychbench/experiments/conformity/corpus/story_facts.yaml
+
+challenge:
+  n_rounds: 3
+  style: peer_majority
+
+agents:
+  confederates:
+    count: 7
+  naive:
+    backend: openai
+    model: gpt-4o-mini
+    temperature: 0.0
+    max_tokens: 16
+    stateful: true
+
+environment:
+  response_visibility: public   # unused by the challenge loop; kept for schema
+
+run:
+  max_concurrency: 8
+
+logging:
+  output_dir: results/
+  format: jsonl

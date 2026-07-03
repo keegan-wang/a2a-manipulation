@@ -1,0 +1,37 @@
+experiment:
+  name: conformity_causal_powered_openai_gpt4omini
+  type: conformity_causal
+  task_type: story
+  trials: 180
+  seed: 0
+  run_id: causal_powered_openai_gpt4omini
+
+corpus:
+  path: psychbench/experiments/conformity/corpus/relational_facts_powered.yaml
+
+causal:
+  condition_set: factorial
+  n_rounds: 1
+
+agents:
+  subject:
+    backend: openai
+    model: gpt-4o-mini
+    temperature: 0.0
+    max_tokens: 192
+  persuader:
+    backend: openai
+    model: gpt-4o-mini
+    temperature: 0.0
+    max_tokens: 192
+
+run:
+  max_concurrency: 4
+  resume: true
+
+environment:
+  response_visibility: public
+
+logging:
+  output_dir: results/
+  format: jsonl

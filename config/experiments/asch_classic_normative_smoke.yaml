@@ -1,0 +1,30 @@
+# Hermetic plumbing smoke for the normative (public/private) manipulation. Echo
+# backend, no keys, <1s. Echo can't compare lengths, so its answers are
+# artifacts — this only proves the alone + group_public + group_private pipeline
+# and the normative_gap headline wire together. Use asch_classic_normative.yaml
+# with a real model for actual data.
+experiment:
+  name: asch_classic_normative_smoke
+  type: conformity
+  task_type: lines_classic
+  observability_manipulation: true
+  seed: 0
+  n_repeats: 1
+
+agents:
+  confederates:
+    count: 7
+    dissenter: false
+  naive:
+    backend: echo
+    model: echo-test
+    temperature: 0.0
+    max_tokens: 16
+    stateful: false
+
+environment:
+  response_visibility: public   # per-condition visibility is set by the runner
+
+logging:
+  output_dir: results/
+  format: jsonl

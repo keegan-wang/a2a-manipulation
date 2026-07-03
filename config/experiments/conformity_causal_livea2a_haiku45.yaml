@@ -1,0 +1,9 @@
+experiment: {name: livea2a_haiku45, type: conformity_causal, task_type: story, trials: 180, seed: 0, run_id: livea2a_haiku45_persGPT54mini}
+corpus: {path: psychbench/experiments/conformity/corpus/relational_facts_powered.yaml}
+causal: {condition_set: live_a2a, n_rounds: 2}
+agents:
+  subject: {backend: bedrock, model: "us.anthropic.claude-haiku-4-5-20251001-v1:0", temperature: 0.0, max_tokens: 192, aws_region_name: us-east-1}
+  persuader: {backend: openai, model: gpt-5.4-mini, temperature: 1.0, max_tokens: 256, extra_params: {reasoning_effort: low}}
+run: {max_concurrency: 4, resume: true}
+environment: {response_visibility: public}
+logging: {output_dir: results/, format: jsonl}
