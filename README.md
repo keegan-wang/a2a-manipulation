@@ -1,16 +1,21 @@
-# Agent-to-Agent Manipulation Through Delegated Evidence
+# Agentic systems are only as safe as their weakest link
 
-Code and data for the paper **"Agent-to-Agent Manipulation Through Delegated Evidence"** (Keegan Wang, 2026).
+Code and data for [**“Agentic systems are only as safe as their weakest link”**](https://marginsofintelligence.com/research-logs/agent-to-agent-manipulation/), by Anantika Mannby and Keegan Wang (2026).
 
-Can one model agent convince another to abandon a correct answer? We introduce a controlled evaluation of agent-to-agent (A2A) manipulation: a subject model answers a fictional-fact question correctly from a source passage, then an attacker model tries to induce a *harmful revision* — a correct initial answer flipped to the attacker-favored wrong one. This repository contains the full experiment framework, run configs, raw per-trial transcripts, and analysis scripts behind every number and figure in the paper.
+Can one model agent convince another to abandon a correct answer? This paper introduces a controlled evaluation of agent-to-agent (A2A) manipulation. A subject model first answers a fictional-fact question correctly from a source passage; an attacker then tries to induce a *harmful revision*: a correct initial answer changed to the specific wrong answer favored by the attacker.
+
+The experiments progress from static messages to live adaptive dialogue, fabricated evidence returned by a delegated sub-agent, and an attacker–worker–aggregator pipeline. They test which models can be moved, how access to evidence changes their resistance, whether the delivery channel affects what they trust, how corruption propagates, and whether verification stops it.
+
+This repository contains the experiment framework, configurations, raw per-trial transcripts, aggregated results, and analysis scripts behind the paper.
 
 ## Findings
 
-1. **Directed influence is target-defined.** In a 14-model pairwise influence map, target resistance explains 88% of pairwise variance in harmful revision; attacker strength explains 2%.
-2. **Concrete evidence access is protective.** A visible source passage — or the target's own retained rationale — protects capable models against static false claims (e.g. GPT-4o-mini: 25/180 → 180/180 harmful revisions when the retained rationale is removed under a hidden source).
-3. **Live adaptation defeats rationale-only defenses.** A live persuader that reads the subject's reasoning raises harmful revision from 12% to 99% (GPT-4o-mini) and 2% to 56% (Claude Haiku 4.5); a neutral live challenger causes almost none.
-4. **Delegated evidence breaks most models, including frontier models.** Claude Opus 4.6 and Sonnet 4.6 reject a fabricated source in every trial when it arrives as a peer message, but accept the same fabrication as a delegated sub-agent tool result (167/180 and 106/180 harmful revisions).
-5. **Grounded verification stops manipulation and propagation.** A verifier eliminates the attack only when it restores source evidence; asserting the correct answer is not enough. Grounding also stops a corrupted worker's report from propagating to a downstream aggregator (aggregator error 59/60 → 0/60).
+1. **Directed influence is subject-governed.** In a 14-model pairwise influence map, subject-model resistance explains 88.3% of pairwise variance in harmful revision, pair-specific structure 9.3%, and attacker strength 2.4%.
+2. **Evidence access controls manipulation.** With the source passage visible, capable models do not revise under static false claims. With the source hidden, removing the subject's retained rationale raises harmful revision from 13.9% to 100% for GPT-4o-mini and from 0.6% to 99.4% for Claude Haiku 4.5.
+3. **Live adaptation defeats rationale-only defenses.** A live persuader that reads the subject's reasoning raises harmful revision from 12.2% to 98.9% for GPT-4o-mini and from 2.2% to 55.6% for Claude Haiku 4.5. A neutral live challenger causes almost none.
+4. **Delegated evidence creates a model-dependent channel failure.** Claude Opus 4.6 and Sonnet 4.6 reject a fabricated source on every trial when it arrives as a peer message, but accept the same fabrication as a delegated sub-agent tool result on 92.8% and 58.9% of trials. GPT-5.4 shows no comparable asymmetry.
+5. **Corruption propagates through the pipeline.** An attacked worker causes a downstream aggregator that resisted direct attack to answer incorrectly on 98.3% of trials (59/60), even though the aggregator never sees the attack.
+6. **Grounded verification stops both the attack and the cascade.** A verifier that restores the source passage reduces harmful revision to 0% for every tested subject and reduces pipeline error from 98.3% to 0%. A verifier that merely asserts the correct answer is inconsistent.
 
 ## Repository layout
 
@@ -36,11 +41,11 @@ pytest                                # offline; verifies the install
 
 ## Reproducing the paper from the shipped data
 
-All raw run data is included, so every figure, table, and statistic regenerates offline:
+All raw run data is included, so the analyses, figures, and tables can be regenerated offline:
 
 ```bash
 python scripts/network_analysis.py    # variance decomposition -> results/reports/network_analysis.json
-python scripts/causal_stats.py        # appendix factorial stats -> results/reports/causal_stats.json
+python scripts/causal_stats.py        # factorial statistics -> results/reports/causal_stats.json
 python scripts/a2a_stats.py           # paired McNemar tests quoted in the text (prints)
 python scripts/make_a2a_figures.py    # Figs: source x rationale, live A2A, channel, verifier+cascade, decomposition
 python scripts/make_paper_figures.py  # Figs: influence map + appendix figures
@@ -56,10 +61,10 @@ python scripts/make_causal_tables.py  # appendix factorial tables -> tables/tabl
 | §4.2 evidence access | source × rationale factorial | `python -m psychbench run --config config/experiments/conformity_causal_srt_<model>.yaml` | `results/causal_srt_*/` |
 | §4.3 live adaptation | static vs live vs neutral | `conformity_causal_livea2a_{gpt4omini,haiku45}.yaml` | `results/livea2a_*/` |
 | §4.4 delegated evidence | peer vs sub-agent channel | `python scripts/probe_subagent_channel.py` | `results/subagent_channel_powered/` |
-| §4.5 verification | grounded vs ungrounded verifier | `conformity_causal_verifier_*.yaml` | `results/causal_verifier_*/` |
-| §4.6 propagation | attacker→worker→aggregator cascade | `python scripts/run_cascade.py` | `results/reports/cascade_main.json` |
-| App. B factorial | 14-model static factorial | `conformity_causal_powered_*.yaml` (see `scripts/run_unified_causal.sh`) | `results/causal_powered_*/` |
-| App. adaptivity/verification controls | replay + forced-source | `conformity_causal_adaptivity_*.yaml`, `conformity_causal_verification_*.yaml` | `results/causal_adaptivity_*/`, `results/causal_verification_*/` |
+| §4.5 propagation | attacker→worker→aggregator cascade | `python scripts/run_cascade.py` | `results/reports/cascade_main.json` |
+| §4.6 verification | grounded vs ungrounded verifier | `conformity_causal_verifier_*.yaml` | `results/causal_verifier_*/` |
+
+Additional static-factorial, adaptivity, and forced-source verification runs are available under `config/experiments/` with their corresponding data under `results/`.
 
 ## Re-running experiments from scratch
 
@@ -85,10 +90,11 @@ The task corpus (180 fictional-fact items, two-option questions, counterbalanced
 ## Citation
 
 ```bibtex
-@article{wang2026a2a,
-  title  = {Agent-to-Agent Manipulation Through Delegated Evidence},
-  author = {Wang, Keegan},
+@misc{mannbywang2026weakestlink,
+  title  = {Agentic Systems Are Only as Safe as Their Weakest Link},
+  author = {Mannby, Anantika and Wang, Keegan},
   year   = {2026},
+  url    = {https://marginsofintelligence.com/research-logs/agent-to-agent-manipulation/},
 }
 ```
 
