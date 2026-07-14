@@ -1,6 +1,6 @@
 # Agentic systems are only as safe as their weakest link
 
-Code and data for [**“Agentic systems are only as safe as their weakest link”**](https://marginsofintelligence.com/research-logs/agent-to-agent-manipulation/), by Anantika Mannby and Keegan Wang (2026).
+Code and data for [**“Evaluating manipulation and error propagation in agent-to-agent interactions”**](https://marginsofintelligence.com/research-logs/agent-to-agent-manipulation/), by Anantika Mannby and Keegan Wang (2026).
 
 Can one model agent convince another to abandon a correct answer? This paper introduces a controlled evaluation of agent-to-agent (A2A) manipulation. A subject model first answers a fictional-fact question correctly from a source passage; an attacker then tries to induce a *harmful revision*: a correct initial answer changed to the specific wrong answer favored by the attacker.
 
@@ -91,7 +91,7 @@ The task corpus (180 fictional-fact items, two-option questions, counterbalanced
 
 ```bibtex
 @misc{mannbywang2026weakestlink,
-  title  = {Agentic systems are only as safe as their weakest link},
+  title  = {Evaluating manipulation and error propagation in agent-to-agent interactions},
   author = {Mannby, Anantika and Wang, Keegan},
   year   = {2026},
   url    = {https://marginsofintelligence.com/research-logs/agent-to-agent-manipulation/},
