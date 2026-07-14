@@ -91,7 +91,7 @@ The task corpus (180 fictional-fact items, two-option questions, counterbalanced
 
 ```bibtex
 @misc{mannbywang2026weakestlink,
-  title  = {Agentic Systems Are Only as Safe as Their Weakest Link},
+  title  = {Agents trust their sub-agents, not their peers},
   author = {Mannby, Anantika and Wang, Keegan},
   year   = {2026},
   url    = {https://marginsofintelligence.com/research-logs/agent-to-agent-manipulation/},
